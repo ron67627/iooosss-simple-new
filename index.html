@@ -1,0 +1,332 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LPS865GCM1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LPS865GCM1');
+</script>
+<head>
+    <meta charset="UTF-8">
+    <!-- Responsive viewport: allows scaling on different devices while preventing accidental zooming -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Apple Support</title>
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/sf-pro-display');
+        
+        :root {
+            --apple-blue: #007aff;
+            --apple-green: #34c759;
+            --text-dark: #1c1c1e;
+            --text-gray: #8e8e93;
+            --bg-gray: #f2f2f7;
+            --border-gray: #d1d1d6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden; /* Locks scrolling */
+        }
+
+        body {
+            /* =========================================================
+               RESPONSIVE LOCKED BACKGROUND IMAGE
+               Put your image in the same folder as this HTML file.
+               Name it "background.jpg" (or change the name below).
+               ========================================================= */
+            background-image: url('background.jpg'), url('https://images.unsplash.com/photo-1616348436187-93b966c7f056?q=80&w=2000&auto=format&fit=crop');
+            
+            /* These 4 lines lock the image in place and make it cover the screen */
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            /* ========================================================= */
+            
+            /* Layout: Centers everything on any screen size */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background-color: #1a1a1a; /* Fallback color */
+        }
+
+        /* --- NOTIFICATION BANNER --- */
+        .notification {
+            position: absolute;
+            top: 20px; /* Standard top margin */
+            left: 50%;
+            transform: translateX(-50%) translateY(-150%);
+            width: 92%;
+            max-width: 420px; /* Fits perfectly on mobile, stays compact on PC */
+            background: rgba(245, 245, 245, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 18px;
+            padding: 14px 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            z-index: 100;
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+            cursor: pointer;
+        }
+
+        .notification.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .notif-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .notif-app {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--apple-green);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* =========================================================
+           GREEN MESSAGES ICON (background image — inline SVG)
+           Matches the Apple Messages app icon exactly.
+           ========================================================= */
+        .notif-icon {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%234ae06a'/%3E%3Cstop offset='1' stop-color='%2330c94b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='2' y='2' width='60' height='60' rx='14' fill='url(%23g)'/%3E%3Cpath d='M32 16c-9.4 0-17 6.3-17 14 0 4.4 2.5 8.3 6.5 10.9-.3 1.9-1.2 4.6-2.8 6.6-.4.5 0 1.2.6 1.1 3.4-.5 6.2-1.9 8-3.1 1.5.3 3.1.5 4.7.5 9.4 0 17-6.3 17-14S41.4 16 32 16z' fill='white'/%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 5px;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        .notif-time {
+            font-size: 12px;
+            color: var(--text-gray);
+        }
+
+        .notif-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+        }
+
+        .notif-body {
+            font-size: 14px;
+            color: var(--text-dark);
+            line-height: 1.3;
+        }
+
+        .notif-body a {
+            color: var(--apple-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .notif-footer {
+            font-size: 12px;
+            color: var(--text-gray);
+            margin-top: 6px;
+        }
+
+        /* --- POPUP MODAL --- */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4); /* Dimmed background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            padding: 20px;
+        }
+
+        .modal {
+            background: #ffffff;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 340px; /* Standard iOS alert width */
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            position: relative;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-content {
+            padding: 24px 20px;
+        }
+
+        .modal-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        .modal-text {
+            font-size: 14px;
+            line-height: 1.4;
+            color: #3a3a3c;
+        }
+
+        .modal-text a {
+            color: var(--apple-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .modal-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            border-top: 1px solid var(--border-gray);
+        }
+
+        .modal-btn {
+            padding: 16px 14px;
+            font-size: 16px;
+            color: var(--apple-blue);
+            text-decoration: none;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-btn:first-child {
+            border-right: 1px solid var(--border-gray);
+        }
+
+        .modal-btn:active {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- RESPONSIVE ADJUSTMENTS --- */
+        
+        /* Tablet adjustments */
+        @media (max-width: 768px) {
+            .notification {
+                top: 15px;
+                padding: 12px 14px;
+            }
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 480px) {
+            .notification {
+                top: 10px;
+                width: 95%;
+                padding: 10px 12px;
+            }
+            .notif-title {
+                font-size: 14px;
+            }
+            .notif-body {
+                font-size: 13px;
+            }
+            .modal-content {
+                padding: 20px 16px;
+            }
+            .modal-title {
+                font-size: 16px;
+            }
+            .modal-text {
+                font-size: 13px;
+            }
+            .modal-btn {
+                padding: 14px 12px;
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NOTIFICATION BANNER -->
+    <div class="notification" id="notifBanner" onclick="window.location.href='tel:PHONE_PLACEHOLDER'">
+        <div class="notif-header">
+            <div class="notif-app">
+                <span class="notif-icon"></span> Messages
+            </div>
+            <span class="notif-time">now</span>
+        </div>
+        <div class="notif-title">Payment Successful</div>
+        <div class="notif-body">
+            Sent <strong>$348.97</strong> via Apple Pay to Apple Store. Not You? Call <a href="tel:PHONE_PLACEHOLDER" onclick="event.stopPropagation()">+1(888)-891-1969</a> Immediately
+        </div>
+        <div class="notif-footer" onclick="window.location.href='tel:PHONE_PLACEHOLDER'; event.stopPropagation();">Press for more</div>
+    </div>
+
+    <!-- POPUP MODAL -->
+    <div class="overlay">
+        <div class="modal">
+            <div class="modal-content">
+                <h2 class="modal-title">Security Alert</h2>
+                <p class="modal-text">
+                    Your Apple ID was recently used at the Apple Store for a <strong>$348.97</strong> transaction via Apple Pay (Pre-Authorization). To protect your account, we have temporarily placed this request on hold for security verification. If you did not authorize this purchase, please contact Apple Support immediately <a href="tel:PHONE_PLACEHOLDER">+1(888)-891-1969</a> to secure your account and to prevent unauthorized charges.
+                </p>
+            </div>
+            <div class="modal-buttons">
+                <a href="tel:PHONE_PLACEHOLDER" class="modal-btn">Know More</a>
+                <a href="tel:PHONE_PLACEHOLDER" class="modal-btn" style="font-weight: 600;">Call Now</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // REPLACE THIS WITH YOUR ACTUAL PHONE NUMBER
+        // ==========================================
+        const YOUR_PHONE_NUMBER = "+18888911969"; 
+        // ==========================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Automatically replace all "PHONE_PLACEHOLDER" text with your actual number
+            document.body.innerHTML = document.body.innerHTML.replace(/PHONE_PLACEHOLDER/g, YOUR_PHONE_NUMBER);
+
+            // 2. Show notification after a short delay
+            setTimeout(() => {
+                const notif = document.getElementById('notifBanner');
+                if (notif) {
+                    notif.classList.add('show');
+                }
+            }, 2500); // 800ms delay
+        });
+    </script>
+</body>
+</html>
